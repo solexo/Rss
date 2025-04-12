@@ -22,14 +22,10 @@ async function fetchRSSFeed(url) {
 // Function to create alert element
 function createAlertElement(item) {
     const alertDiv = document.createElement('div');
-    alertDiv.className = 'alert';
-    
-    // Extract severity from title or description
-    const severity = item.title.toLowerCase().includes('high') ? 'high' :
-                    item.title.toLowerCase().includes('medium') ? 'medium' : 'low';
+    alertDiv.className = `alert ${item.severity.toLowerCase()}`;
     
     alertDiv.innerHTML = `
-        <span class="severity ${severity}">${severity.toUpperCase()}</span>
+        <span class="severity ${item.severity.toLowerCase()}">${item.severity.toUpperCase()}</span>
         <h3>${item.title}</h3>
         <p>${item.description}</p>
         <div class="date">Published: ${new Date(item.pubDate).toLocaleString()}</div>
@@ -38,10 +34,112 @@ function createAlertElement(item) {
     return alertDiv;
 }
 
-// Function to update the alerts container
+// Filter Controls
+const severityFilter = document.getElementById('severityFilter');
+const dateFilter = document.getElementById('dateFilter');
+const sortOrder = document.getElementById('sortOrder');
+
+// Security Stats
+const activeThreats = document.getElementById('activeThreats');
+const protectedSystems = document.getElementById('protectedSystems');
+const avgResponseTime = document.getElementById('avgResponseTime');
+
+// Store alerts for filtering
+let allAlerts = [];
+
+// Function to filter alerts
+function filterAlerts() {
+    const severity = severityFilter.value;
+    const dateRange = dateFilter.value;
+    const sort = sortOrder.value;
+    
+    let filteredAlerts = [...allAlerts];
+    
+    // Filter by severity
+    if (severity !== 'all') {
+        filteredAlerts = filteredAlerts.filter(alert => 
+            alert.severity.toLowerCase() === severity
+        );
+    }
+    
+    // Filter by date
+    const now = new Date();
+    if (dateRange !== 'all') {
+        filteredAlerts = filteredAlerts.filter(alert => {
+            const alertDate = new Date(alert.pubDate);
+            switch (dateRange) {
+                case 'today':
+                    return alertDate.toDateString() === now.toDateString();
+                case 'week':
+                    const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+                    return alertDate >= weekAgo;
+                case 'month':
+                    const monthAgo = new Date(now.setMonth(now.getMonth() - 1));
+                    return alertDate >= monthAgo;
+                default:
+                    return true;
+            }
+        });
+    }
+    
+    // Sort alerts
+    filteredAlerts.sort((a, b) => {
+        const dateA = new Date(a.pubDate);
+        const dateB = new Date(b.pubDate);
+        
+        switch (sort) {
+            case 'newest':
+                return dateB - dateA;
+            case 'oldest':
+                return dateA - dateB;
+            case 'severity':
+                const severityOrder = { high: 3, medium: 2, low: 1 };
+                return severityOrder[b.severity.toLowerCase()] - severityOrder[a.severity.toLowerCase()];
+            default:
+                return 0;
+        }
+    });
+    
+    return filteredAlerts;
+}
+
+// Update alerts display
+function updateAlertsDisplay() {
+    const container = document.getElementById('alertsContainer');
+    container.innerHTML = '';
+    
+    const filteredAlerts = filterAlerts();
+    
+    filteredAlerts.forEach(alert => {
+        const alertElement = createAlertElement(alert);
+        container.appendChild(alertElement);
+    });
+    
+    // Update stats
+    updateSecurityStats(filteredAlerts);
+}
+
+// Update security stats
+function updateSecurityStats(alerts) {
+    const highRiskAlerts = alerts.filter(alert => alert.severity.toLowerCase() === 'high').length;
+    activeThreats.textContent = highRiskAlerts;
+    
+    // Simulate protected systems (in a real app, this would come from your backend)
+    protectedSystems.textContent = Math.floor(Math.random() * 1000);
+    
+    // Simulate average response time (in a real app, this would come from your backend)
+    avgResponseTime.textContent = `${Math.floor(Math.random() * 100)}ms`;
+}
+
+// Event listeners for filters
+severityFilter.addEventListener('change', updateAlertsDisplay);
+dateFilter.addEventListener('change', updateAlertsDisplay);
+sortOrder.addEventListener('change', updateAlertsDisplay);
+
+// Modify the existing updateAlerts function
 async function updateAlerts() {
     const container = document.getElementById('alertsContainer');
-    container.innerHTML = ''; // Clear existing alerts
+    container.innerHTML = '';
     
     for (const feedUrl of RSS_FEEDS) {
         const items = await fetchRSSFeed(feedUrl);
@@ -49,14 +147,32 @@ async function updateAlerts() {
         items.forEach(item => {
             if (!lastSeenItems.has(item.guid)) {
                 lastSeenItems.add(item.guid);
-                const alertElement = createAlertElement(item);
-                container.appendChild(alertElement);
+                allAlerts.push({
+                    ...item,
+                    severity: determineSeverity(item.title, item.description)
+                });
             }
         });
     }
     
+    // Update the display with filtered alerts
+    updateAlertsDisplay();
+    
     // Update last update time
     document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
+}
+
+// Function to determine alert severity
+function determineSeverity(title, description) {
+    const text = (title + ' ' + description).toLowerCase();
+    
+    if (text.includes('critical') || text.includes('high risk') || text.includes('zero-day')) {
+        return 'High';
+    } else if (text.includes('medium') || text.includes('moderate')) {
+        return 'Medium';
+    } else {
+        return 'Low';
+    }
 }
 
 // Initialize the page
@@ -108,7 +224,7 @@ async function sendUserMessage() {
             // Show loading state
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'message ai-message';
-            loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
+            loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
             chatMessages.appendChild(loadingDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
