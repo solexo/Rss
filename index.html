@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Atlas - Moroccan Security Team</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function() {
+            emailjs.init("YOUR_EMAILJS_USER_ID"); // You'll need to replace this with your actual EmailJS user ID
+        })();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="cyber-background" id="cyberBackground"></div>
+        
+        <header class="cyber-header">
+            <div class="logo-section">
+                <div class="team-logo">
+                    <div class="logo-shield">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span class="moroccan-flag">&#x1f1f2;&#x1f1e6;</span>
+                        <span class="team-name">Moroccan Security Team</span>
+                    </div>
+                </div>
+                <div class="logo-container">
+                    <i class="fas fa-shield-alt cyber-logo"></i>
+                    <h1>Cyber Atlas</h1>
+                    <div class="tagline">Guardians of the Digital Realm</div>
+                </div>
+            </div>
+            <p>Advanced Security Intelligence Platform</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="dashboard-section">
+                <div class="controls">
+                    <button id="refreshBtn" class="cyber-button">
+                        <i class="fas fa-sync-alt"></i> Refresh Alerts
+                    </button>
+                    <div class="status">
+                        <span id="lastUpdate">Last updated: Never</span>
+                    </div>
+                </div>
+
+                <div class="alerts-container" id="alertsContainer">
+                    <!-- Alerts will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="notification-settings">
+            <h3><i class="fas fa-bell"></i> Notification Settings</h3>
+            <div class="settings-form">
+                <input type="email" id="emailInput" placeholder="Enter your email for alerts">
+                <button id="saveEmail" class="cyber-button">Save Email</button>
+                <div class="notification-status" id="notificationStatus"></div>
+            </div>
+        </div>
+
+        <!-- Floating AI Assistant -->
+        <div class="ai-assistant-container">
+            <button class="ai-assistant-button" id="toggleChat">
+                <i class="fas fa-robot"></i>
+            </button>
+            <div class="ai-chat-window" id="aiChatWindow">
+                <div class="chat-header">
+                    <h3><i class="fas fa-robot"></i> Security AI Assistant</h3>
+                    <button class="close-chat" id="closeChat"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Chat messages will appear here -->
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="userInput" placeholder="Ask about security threats...">
+                    <button id="sendMessage" class="cyber-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
