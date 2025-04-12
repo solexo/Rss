@@ -41,6 +41,34 @@
         <div class="main-content">
             <div class="dashboard-section">
                 <div class="controls">
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label for="severityFilter">Severity:</label>
+                            <select id="severityFilter" class="cyber-select">
+                                <option value="all">All Severities</option>
+                                <option value="high">High Risk</option>
+                                <option value="medium">Medium Risk</option>
+                                <option value="low">Low Risk</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="dateFilter">Time Range:</label>
+                            <select id="dateFilter" class="cyber-select">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="sortOrder">Sort By:</label>
+                            <select id="sortOrder" class="cyber-select">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="severity">Severity Level</option>
+                            </select>
+                        </div>
+                    </div>
                     <button id="refreshBtn" class="cyber-button">
                         <i class="fas fa-sync-alt"></i> Refresh Alerts
                     </button>
@@ -49,8 +77,56 @@
                     </div>
                 </div>
 
+                <div class="security-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div class="stat-content">
+                            <h3>Active Threats</h3>
+                            <p id="activeThreats">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-shield-virus"></i>
+                        <div class="stat-content">
+                            <h3>Protected Systems</h3>
+                            <p id="protectedSystems">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-clock"></i>
+                        <div class="stat-content">
+                            <h3>Response Time</h3>
+                            <p id="avgResponseTime">0ms</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="alerts-container" id="alertsContainer">
                     <!-- Alerts will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <div class="security-tools">
+                <h3><i class="fas fa-tools"></i> Security Tools</h3>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <i class="fas fa-virus-slash"></i>
+                        <h4>Threat Scanner</h4>
+                        <p>Real-time system vulnerability scan</p>
+                        <button class="cyber-button">Run Scan</button>
+                    </div>
+                    <div class="tool-card">
+                        <i class="fas fa-network-wired"></i>
+                        <h4>Network Monitor</h4>
+                        <p>Monitor network traffic and connections</p>
+                        <button class="cyber-button">View Network</button>
+                    </div>
+                    <div class="tool-card">
+                        <i class="fas fa-user-shield"></i>
+                        <h4>Access Control</h4>
+                        <p>Manage user permissions and access</p>
+                        <button class="cyber-button">Manage Access</button>
+                    </div>
                 </div>
             </div>
         </div>
