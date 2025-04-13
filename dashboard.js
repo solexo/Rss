@@ -122,15 +122,15 @@ function initializeAttackGraphs() {
     // Create a force-directed graph with D3.js
     createAttackVectorGraph(attackGraph);
     
-    // Create a pie chart for attack types
+    // Create a bar chart for real-time attack types
     const attackTypeCtx = document.getElementById('attackTypeChart');
     if (attackTypeCtx) {
-        new Chart(attackTypeCtx, {
-            type: 'doughnut',
+        const attackChart = new Chart(attackTypeCtx, {
+            type: 'bar',
             data: {
                 labels: ['Malware', 'Phishing', 'DDoS', 'Zero-day', 'Ransomware'],
                 datasets: [{
-                    data: [25, 30, 15, 10, 20],
+                    data: [0, 0, 0, 0, 0], // Initial values will be updated in real-time
                     backgroundColor: [
                         'rgba(0, 255, 157, 0.6)',
                         'rgba(0, 184, 255, 0.6)',
@@ -138,13 +138,33 @@ function initializeAttackGraphs() {
                         'rgba(255, 68, 68, 0.6)',
                         'rgba(255, 187, 51, 0.6)'
                     ],
-                    borderWidth: 0
+                    borderWidth: 0,
+                    borderRadius: 5
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '70%',
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.6)'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.6)'
+                        }
+                    }
+                },
                 plugins: {
                     legend: {
                         display: false
@@ -152,6 +172,80 @@ function initializeAttackGraphs() {
                 }
             }
         });
+
+        // Function to update dashboard with real RSS data
+        async function updateDashboardWithRSS() {
+            try {
+                const response = await fetch('http://localhost:3001/api/security-logs');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch security logs');
+                }
+                
+                const data = await response.json();
+                
+                // Update attack distribution chart
+                if (attackChart) {
+                    attackChart.data.datasets[0].data = [
+                        data.malware,
+                        data.phishing,
+                        data.ddos,
+                        data.zeroDay,
+                        data.ransomware
+                    ];
+                    attackChart.update();
+                }
+                
+                // Update threat counters
+                document.getElementById('activeThreats').textContent = data.totalThreats;
+                document.getElementById('protectedSystems').textContent = data.protectedSystems;
+                document.getElementById('avgResponseTime').textContent = data.avgResponseTime + 'ms';
+                
+                // Update threat feed with real alerts
+                const threatFeed = document.getElementById('threatIntelFeed');
+                if (threatFeed) {
+                    threatFeed.innerHTML = '';
+                    data.alerts.forEach(alert => {
+                        const threatEntry = document.createElement('div');
+                        threatEntry.className = 'threat-entry';
+                        threatEntry.innerHTML = `
+                            <div class="threat-time">${new Date(alert.pubDate).toLocaleTimeString()}</div>
+                            <div class="threat-description">${alert.title}</div>
+                            <div class="threat-severity ${getSeverity(alert.title)}">${getSeverity(alert.title)}</div>
+                        `;
+                        threatFeed.appendChild(threatEntry);
+                    });
+                }
+                
+                // Update network traffic based on threat activity
+                const networkTraffic = document.getElementById('networkTraffic');
+                if (networkTraffic) {
+                    const baseTraffic = 100; // Base traffic in GB
+                    const activityMultiplier = data.totalThreats * 0.5; // Each threat adds 0.5GB
+                    networkTraffic.textContent = Math.round(baseTraffic + activityMultiplier) + ' GB';
+                }
+                
+            } catch (error) {
+                console.error('Error updating dashboard with RSS data:', error);
+            }
+        }
+        
+        // Helper function to determine threat severity
+        function getSeverity(title) {
+            const lowerTitle = title.toLowerCase();
+            if (lowerTitle.includes('critical') || lowerTitle.includes('emergency')) {
+                return 'high';
+            } else if (lowerTitle.includes('warning') || lowerTitle.includes('alert')) {
+                return 'medium';
+            } else {
+                return 'low';
+            }
+        }
+        
+        // Initial update
+        updateDashboardWithRSS();
+        
+        // Update every 5 minutes
+        setInterval(updateDashboardWithRSS, 300000);
     }
     
     // Create a line chart for the timeline
@@ -710,7 +804,7 @@ function updateDashboardStats() {
     if (networkTraffic) {
         const currentValue = parseInt(networkTraffic.textContent);
         const newValue = currentValue + Math.floor(Math.random() * 15) - 7; // Random change between -7 and +7
-        if (newValue > 0) networkTraffic.textContent = newValue + '<span class="unit">GB</span>';
+        if (newValue > 0) networkTraffic.textContent = newValue + ' GB';
     }
     
     // Update map attack counters
