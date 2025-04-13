@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Atlas - Moroccan Security Team</title>
+    <title>AtlasShield - Moroccan Security Team</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -18,160 +18,181 @@
     <div class="container">
         <div class="cyber-background" id="cyberBackground"></div>
         
-        <header class="cyber-header">
-            <div class="logo-section">
-                <div class="team-logo">
-                    <div class="logo-shield">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <div class="logo-text">
-                        <span class="moroccan-flag">&#x1f1f2;&#x1f1e6;</span>
-                        <span class="team-name">Moroccan Security Team</span>
-                    </div>
-                </div>
-                <div class="logo-container">
-                    <i class="fas fa-shield-alt cyber-logo"></i>
-                    <h1>Cyber Atlas</h1>
-                    <div class="tagline">Guardians of the Digital Realm</div>
-                </div>
-            </div>
-            <p>Advanced Security Intelligence Platform</p>
-        </header>
+        <!-- Language Selector -->
+        <div class="language-selector">
+            <button class="language-btn active" data-lang="en">EN</button>
+            <button class="language-btn" data-lang="fr">FR</button>
+            <button class="language-btn" data-lang="ar">عر</button>
+        </div>
         
-        <div class="main-content">
-            <div class="dashboard-section">
-                <div class="controls">
-                    <div class="filter-controls">
-                        <div class="filter-group">
-                            <label for="severityFilter">Severity:</label>
-                            <select id="severityFilter" class="cyber-select">
-                                <option value="all">All Severities</option>
-                                <option value="high">High Risk</option>
-                                <option value="medium">Medium Risk</option>
-                                <option value="low">Low Risk</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="dateFilter">Time Range:</label>
-                            <select id="dateFilter" class="cyber-select">
-                                <option value="all">All Time</option>
-                                <option value="today">Today</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="sortOrder">Sort By:</label>
-                            <select id="sortOrder" class="cyber-select">
-                                <option value="newest">Newest First</option>
-                                <option value="oldest">Oldest First</option>
-                                <option value="severity">Severity Level</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button id="refreshBtn" class="cyber-button">
-                        <i class="fas fa-sync-alt"></i> Refresh Alerts
-                    </button>
-                    <div class="status">
-                        <span id="lastUpdate">Last updated: Never</span>
-                    </div>
-                </div>
-
-                <!-- Security Stats Section -->
-                <section class="security-stats">
-                    <div class="stat-card threat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>Active Threats</h3>
-                            <p class="stat-value" id="activeThreats">0</p>
-                            <span class="stat-label">High Risk Alerts</span>
-                        </div>
-                    </div>
-                    <div class="stat-card system-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-server"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>Protected Systems</h3>
-                            <p class="stat-value" id="protectedSystems">0</p>
-                            <span class="stat-label">Monitored Endpoints</span>
-                        </div>
-                    </div>
-                    <div class="stat-card response-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>Response Time</h3>
-                            <p class="stat-value" id="avgResponseTime">0ms</p>
-                            <span class="stat-label">Average Response</span>
-                        </div>
-                    </div>
-                </section>
-
-                <div class="alerts-container" id="alertsContainer">
-                    <!-- Alerts will be dynamically inserted here -->
-                </div>
-            </div>
-
-            <div class="security-tools">
-                <h3><i class="fas fa-tools"></i> Security Tools</h3>
-                <div class="tools-grid">
-                    <div class="tool-card">
-                        <i class="fas fa-virus-slash"></i>
-                        <h4>Threat Scanner</h4>
-                        <p>Real-time system vulnerability scan</p>
-                        <button class="cyber-button">Run Scan</button>
-                    </div>
-                    <div class="tool-card">
-                        <i class="fas fa-network-wired"></i>
-                        <h4>Network Monitor</h4>
-                        <p>Monitor network traffic and connections</p>
-                        <button class="cyber-button">View Network</button>
-                    </div>
-                    <div class="tool-card">
-                        <i class="fas fa-user-shield"></i>
-                        <h4>Access Control</h4>
-                        <p>Manage user permissions and access</p>
-                        <button class="cyber-button">Manage Access</button>
-                    </div>
-                </div>
-            </div>
+        <div class="logo-container">
+            <i class="fas fa-shield-alt cyber-logo"></i>
+            <h1> Atlas Shield  </h1>
+            <div class="tagline">Guardians of the Digital Realm</div>
         </div>
+    </div>
+    <p>Advanced Security Intelligence Platform</p>
+</header>
 
-        <div class="notification-settings">
-            <h3><i class="fas fa-bell"></i> Notification Settings</h3>
-            <div class="settings-form">
-                <input type="email" id="emailInput" placeholder="Enter your email for alerts">
-                <button id="saveEmail" class="cyber-button">Save Email</button>
-                <div class="notification-status" id="notificationStatus"></div>
+<div class="main-content">
+    <div class="dashboard-section">
+        <div class="controls">
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="severityFilter">Severity:</label>
+                    <select id="severityFilter" class="cyber-select">
+                        <option value="all">All Severities</option>
+                        <option value="high">High Risk</option>
+                        <option value="medium">Medium Risk</option>
+                        <option value="low">Low Risk</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="dateFilter">Time Range:</label>
+                    <select id="dateFilter" class="cyber-select">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sortOrder">Sort By:</label>
+                    <select id="sortOrder" class="cyber-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="severity">Severity Level</option>
+                    </select>
+                </div>
             </div>
-        </div>
-
-        <!-- Floating AI Assistant -->
-        <div class="ai-assistant-container">
-            <button class="ai-assistant-button" id="toggleChat">
-                <i class="fas fa-robot"></i>
+            <button id="refreshBtn" class="cyber-button">
+                <i class="fas fa-sync-alt"></i> Refresh Alerts
             </button>
-            <div class="ai-chat-window" id="aiChatWindow">
-                <div class="chat-header">
-                    <h3><i class="fas fa-robot"></i> Security AI Assistant</h3>
-                    <button class="close-chat" id="closeChat"><i class="fas fa-times"></i></button>
+            <div class="status">
+                <span id="lastUpdate">Last updated: Never</span>
+            </div>
+        </div>
+
+        <!-- Source Counter Section -->
+        <div class="source-counter">
+            <div class="source-info">
+                <i class="fas fa-rss"></i>
+                <span id="sourceCount">0</span> security feeds monitored
+            </div>
+            <button id="showSourcesBtn" class="cyber-button source-btn">
+                <i class="fas fa-list"></i> View Sources
+            </button>
+        </div>
+        
+        <!-- Source List Modal (Initially Hidden) -->
+        <div id="sourcesModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-rss"></i> Security Intelligence Sources</h3>
+                    <button id="closeSourcesBtn" class="close-btn"><i class="fas fa-times"></i></button>
                 </div>
-                <div class="chat-messages" id="chatMessages">
-                    <!-- Chat messages will appear here -->
+                <div class="modal-body">
+                    <p>Monitoring <span id="modalSourceCount">0</span> security intelligence feeds from industry experts and organizations:</p>
+                    <div id="sourceList" class="source-list"></div>
                 </div>
-                <div class="chat-input">
-                    <input type="text" id="userInput" placeholder="Ask about security threats...">
-                    <button id="sendMessage" class="cyber-button">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
+            </div>
+        </div>
+
+        <!-- Security Stats Section -->
+        <section class="security-stats">
+            <div class="stat-card threat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shield-alt"></i>
                 </div>
+                <div class="stat-content">
+                    <h3>Active Threats</h3>
+                    <p class="stat-value" id="activeThreats">0</p>
+                    <span class="stat-label">High Risk Alerts</span>
+                </div>
+            </div>
+            <div class="stat-card system-card">
+                <div class="stat-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Protected Systems</h3>
+                    <p class="stat-value" id="protectedSystems">0</p>
+                    <span class="stat-label">Monitored Endpoints</span>
+                </div>
+            </div>
+            <div class="stat-card response-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Response Time</h3>
+                    <p class="stat-value" id="avgResponseTime">0ms</p>
+                    <span class="stat-label">Average Response</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="alerts-container" id="alertsContainer">
+            <!-- Alerts will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <div class="security-tools">
+        <h3><i class="fas fa-tools"></i> Security Tools</h3>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <i class="fas fa-virus-slash"></i>
+                <h4>Threat Scanner</h4>
+                <p>Real-time system vulnerability scan</p>
+                <button class="cyber-button">Run Scan</button>
+            </div>
+            <div class="tool-card">
+                <i class="fas fa-network-wired"></i>
+                <h4>Network Monitor</h4>
+                <p>Monitor network traffic and connections</p>
+                <button class="cyber-button">View Network</button>
+            </div>
+            <div class="tool-card">
+                <i class="fas fa-user-shield"></i>
+                <h4>Access Control</h4>
+                <p>Manage user permissions and access</p>
+                <button class="cyber-button">Manage Access</button>
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+</div>
+
+<div class="notification-settings">
+    <h3><i class="fas fa-bell"></i> Notification Settings</h3>
+    <div class="settings-form">
+        <input type="email" id="emailInput" placeholder="Enter your email for alerts">
+        <button id="saveEmail" class="cyber-button">Save Email</button>
+        <div class="notification-status" id="notificationStatus"></div>
+    </div>
+</div>
+
+<!-- Floating AI Assistant -->
+<div class="ai-assistant-container">
+    <button class="ai-assistant-button" id="toggleChat">
+        <i class="fas fa-robot"></i>
+    </button>
+    <div class="ai-chat-window" id="aiChatWindow">
+        <div class="chat-header">
+            <h3><i class="fas fa-robot"></i> Security AI Assistant</h3>
+            <button class="close-chat" id="closeChat"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Chat messages will appear here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Ask about security threats...">
+            <button id="sendMessage" class="cyber-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+</div>
+<script src="script.js"></script>
 </body>
 </html> 
