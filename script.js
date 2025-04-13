@@ -407,7 +407,7 @@ function updateSecurityStats() {
 
     // Make sure at least one high risk alert is shown for demo purposes
     const displayHighRisk = Math.max(highRiskAlerts, allAlerts.length > 0 ? 1 : 0);
-    
+
     // Update active threats count
     if (activeThreats) {
         activeThreats.textContent = displayHighRisk > 0 ? displayHighRisk : '0';
@@ -454,14 +454,14 @@ function determineSeverity(title, description) {
     // Check for high severity keywords
     for (const keyword of highSeverityKeywords) {
         if (text.includes(keyword)) {
-            return 'HIGH';
+        return 'HIGH';
         }
     }
     
     // Check for medium severity keywords
     for (const keyword of mediumSeverityKeywords) {
         if (text.includes(keyword)) {
-            return 'MEDIUM';
+        return 'MEDIUM';
         }
     }
     
@@ -725,41 +725,41 @@ async function sendUserMessage() {
     });
     
     // Add user message to chat
-    addMessage(message, true);
-    userInput.value = '';
-    
-    // Show loading state
-    const loadingDiv = document.createElement('div');
+        addMessage(message, true);
+        userInput.value = '';
+        
+        // Show loading state
+        const loadingDiv = document.createElement('div');
     loadingDiv.className = 'message ai-message loading';
-    loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
-    chatMessages.appendChild(loadingDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+        loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        chatMessages.appendChild(loadingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    try {
-        // Get current alerts and stats for context
-        const currentAlerts = Array.from(document.querySelectorAll('.alert')).map(alert => ({
-            title: alert.querySelector('h3')?.textContent || '',
-            description: alert.querySelector('p')?.textContent || '',
-            severity: alert.querySelector('.severity')?.textContent || ''
-        }));
+        try {
+            // Get current alerts and stats for context
+            const currentAlerts = Array.from(document.querySelectorAll('.alert')).map(alert => ({
+                title: alert.querySelector('h3')?.textContent || '',
+                description: alert.querySelector('p')?.textContent || '',
+                severity: alert.querySelector('.severity')?.textContent || ''
+            }));
 
-        const currentStats = {
-            activeThreats: document.getElementById('activeThreats')?.textContent || '0',
-            protectedSystems: document.getElementById('protectedSystems')?.textContent || '0',
-            responseTime: document.getElementById('avgResponseTime')?.textContent || '0ms'
-        };
+            const currentStats = {
+                activeThreats: document.getElementById('activeThreats')?.textContent || '0',
+                protectedSystems: document.getElementById('protectedSystems')?.textContent || '0',
+                responseTime: document.getElementById('avgResponseTime')?.textContent || '0ms'
+            };
 
         // Check for specific user intents and add some variation
-        let response;
+            let response;
         
-        if (message.includes('thank') || message.includes('thanks')) {
+            if (message.includes('thank') || message.includes('thanks')) {
             const thankResponses = [
                 "You're welcome! Is there anything else you'd like to know about the security status or alerts?",
                 "Happy to help! Let me know if you need any other information about your security status.",
                 "My pleasure. I'm here if you have more questions about security threats or alerts."
             ];
             response = thankResponses[Math.floor(Math.random() * thankResponses.length)];
-        } else if (message.includes('yes') || message.includes('okay') || message.includes('ok')) {
+            } else if (message.includes('yes') || message.includes('okay') || message.includes('ok')) {
             // Check for previous AI message to determine context
             const prevAIMessage = getPreviousAIMessage();
             
@@ -801,28 +801,28 @@ async function sendUserMessage() {
                 "Hey! I'm your security assistant. What information do you need today?"
             ];
             response = greetings[Math.floor(Math.random() * greetings.length)] + `\n\nI'm currently monitoring ${currentAlerts.length} active security alerts.`;
-        } else {
-            // If no specific intent is detected, provide a contextual response
-            response = `I see ${currentAlerts.length} active alerts in the system. Here's what I can tell you:
+            } else {
+                // If no specific intent is detected, provide a contextual response
+                response = `I see ${currentAlerts.length} active alerts in the system. Here's what I can tell you:
+                
+                1. Current Status:
+                - Active Threats: ${currentStats.activeThreats}
+                - Protected Systems: ${currentStats.protectedSystems}
+                - Response Time: ${currentStats.responseTime}
+                
+                2. Recent Alerts:
+                ${currentAlerts.slice(0, 3).map(alert => `
+                - ${alert.severity} Alert: ${alert.title}
+                  ${alert.description}`).join('\n')}
+                
+                Would you like me to:
+                1. Analyze these alerts in detail?
+                2. Provide security recommendations?
+                3. Explain how to use our security tools?
+                4. Help you understand the current threat level?`;
+            }
             
-            1. Current Status:
-            - Active Threats: ${currentStats.activeThreats}
-            - Protected Systems: ${currentStats.protectedSystems}
-            - Response Time: ${currentStats.responseTime}
-            
-            2. Recent Alerts:
-            ${currentAlerts.slice(0, 3).map(alert => `
-            - ${alert.severity} Alert: ${alert.title}
-              ${alert.description}`).join('\n')}
-            
-            Would you like me to:
-            1. Analyze these alerts in detail?
-            2. Provide security recommendations?
-            3. Explain how to use our security tools?
-            4. Help you understand the current threat level?`;
-        }
-        
-        // Remove loading message and add response
+            // Remove loading message and add response
         const loadingElement = document.querySelector('.message.loading');
         if (loadingElement && loadingElement.parentNode) {
             loadingElement.parentNode.removeChild(loadingElement);
@@ -835,29 +835,29 @@ async function sendUserMessage() {
             timestamp: new Date()
         });
         
-        addMessage(response);
-        
-    } catch (error) {
+            addMessage(response);
+            
+        } catch (error) {
         console.error('Error in AI chat:', error);
         
         // Remove loading message safely
         const loadingElement = document.querySelector('.message.loading');
         if (loadingElement && loadingElement.parentNode) {
             loadingElement.parentNode.removeChild(loadingElement);
-        }
-        
-        // Provide a fallback response
-        const fallbackResponse = `I apologize for the technical difficulty. Here's what I can tell you about the current security status:
-        
-        1. Active Alerts: ${document.querySelectorAll('.alert').length}
-        2. System Status:
-           - Active Threats: ${document.getElementById('activeThreats')?.textContent || '0'}
-           - Protected Systems: ${document.getElementById('protectedSystems')?.textContent || '0'}
-        
-        Would you like me to:
-        1. Explain the current alerts?
-        2. Provide security recommendations?
-        3. Show you how to use our security tools?`;
+            }
+            
+            // Provide a fallback response
+            const fallbackResponse = `I apologize for the technical difficulty. Here's what I can tell you about the current security status:
+            
+            1. Active Alerts: ${document.querySelectorAll('.alert').length}
+            2. System Status:
+               - Active Threats: ${document.getElementById('activeThreats')?.textContent || '0'}
+               - Protected Systems: ${document.getElementById('protectedSystems')?.textContent || '0'}
+            
+            Would you like me to:
+            1. Explain the current alerts?
+            2. Provide security recommendations?
+            3. Show you how to use our security tools?`;
         
         // Add AI response to message history
         messageHistory.push({
@@ -865,10 +865,10 @@ async function sendUserMessage() {
             isUser: false,
             timestamp: new Date()
         });
-        
-        addMessage(fallbackResponse);
+            
+            addMessage(fallbackResponse);
+        }
     }
-}
 
 // Helper functions for generating varied responses
 function getPreviousAIMessage() {
@@ -1175,8 +1175,11 @@ const securityTools = {
             try {
                 const toolCard = document.querySelector('.tool-card:nth-child(1)');
                 const button = toolCard.querySelector('button');
+                const buttonText = button.querySelector('.button-text');
+                
+                // Disable button and show loading state
                 button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
+                buttonText.textContent = 'Scanning...';
                 
                 // Simulate scanning process
                 await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1194,7 +1197,7 @@ const securityTools = {
                 
                 // Update button and show results
                 button.disabled = false;
-                button.innerHTML = '<i class="fas fa-shield-virus"></i> Scan System';
+                buttonText.textContent = 'Initialize Scan';
                 
                 // Show results in a notification
                 const notification = document.createElement('div');
@@ -1233,16 +1236,17 @@ const securityTools = {
             try {
                 const toolCard = document.querySelector('.tool-card:nth-child(2)');
                 const button = toolCard.querySelector('button');
+                const buttonText = button.querySelector('.button-text');
                 const isMonitoring = button.getAttribute('data-monitoring') === 'true';
                 
                 if (isMonitoring) {
                     // Stop monitoring
-                    button.innerHTML = '<i class="fas fa-play"></i> Start Monitoring';
+                    buttonText.textContent = 'View Network';
                     button.setAttribute('data-monitoring', 'false');
                     clearInterval(window.monitorInterval);
                 } else {
                     // Start monitoring
-                    button.innerHTML = '<i class="fas fa-pause"></i> Stop Monitoring';
+                    buttonText.textContent = 'Stop Monitoring';
                     button.setAttribute('data-monitoring', 'true');
                     
                     // Simulate network activity
@@ -1285,6 +1289,7 @@ const securityTools = {
             try {
                 const toolCard = document.querySelector('.tool-card:nth-child(3)');
                 const button = toolCard.querySelector('button');
+                const buttonText = button.querySelector('.button-text');
                 
                 // Simulate access control panel
                 const accessPanel = document.createElement('div');
@@ -1368,9 +1373,15 @@ function showToolError(toolName, message) {
 document.addEventListener('DOMContentLoaded', () => {
     // Add click handlers to tool buttons
     document.querySelectorAll('.tool-card button').forEach(button => {
-        button.addEventListener('click', () => {
-            // Get the tool name from the h4 element
-            const toolName = button.closest('.tool-card').querySelector('h4').textContent.toLowerCase();
+        // Remove any existing click listeners
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
+        
+        // Get the tool name from the h4 element
+        const toolName = newButton.closest('.tool-card').querySelector('h4').textContent.toLowerCase();
+        
+        newButton.addEventListener('click', () => {
+            console.log(`Tool clicked: ${toolName}`);
             
             if (toolName.includes('scanner') || toolName.includes('threat')) {
                 securityTools.threatScanner.scan();
@@ -1924,14 +1935,14 @@ document.addEventListener('DOMContentLoaded', () => {
             newButton.addEventListener('click', () => {
                 console.log(`Security tool ${toolIndex} clicked`);
                 if (toolIndex === 1) {
-                    securityTools.threatScanner.scan();
+                securityTools.threatScanner.scan();
                 } else if (toolIndex === 2) {
-                    securityTools.networkMonitor.start();
+                securityTools.networkMonitor.start();
                 } else if (toolIndex === 3) {
-                    securityTools.accessControl.manage();
-                }
-            });
+                securityTools.accessControl.manage();
+            }
         });
+    });
         
         // Fix language buttons explicitly
         document.querySelectorAll('.language-btn').forEach(btn => {
