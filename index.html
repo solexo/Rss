@@ -6,7 +6,20 @@
     <title>AtlasShield - Moroccan Security Team</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- ThreeJS for 3D animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Chart.js for interactive graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- GSAP for advanced animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <!-- Particles.js for background effects -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- D3.js for data visualization -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Email.js for notifications -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         (function() {
@@ -98,36 +111,152 @@
             </div>
         </div>
 
-        <!-- Security Stats Section -->
+        <!-- Global Threat Map Section -->
+        <section class="global-threat-map">
+            <h3 class="section-title"><i class="fas fa-globe"></i> Global Threat Intelligence</h3>
+            <div class="map-container">
+                <div id="threatMap" class="cyber-map"></div>
+                <div class="map-overlay">
+                    <div class="map-stats">
+                        <div class="map-stat">
+                            <span class="map-stat-value" id="totalAttacks">0</span>
+                            <span class="map-stat-label">Active Attacks</span>
+                        </div>
+                        <div class="map-stat">
+                            <span class="map-stat-value" id="blockedAttacks">0</span>
+                            <span class="map-stat-label">Blocked Threats</span>
+                        </div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <span class="legend-color high"></span>
+                            <span>High Severity</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color medium"></span>
+                            <span>Medium Severity</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color low"></span>
+                            <span>Low Severity</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-time Attack Visualization -->
+        <section class="attack-visualization">
+            <h3 class="section-title"><i class="fas fa-chart-network"></i> Attack Vector Analysis</h3>
+            <div class="visualization-container">
+                <div id="attackGraph" class="cyber-graph"></div>
+                <div class="attack-stats">
+                    <div class="attack-type-distribution">
+                        <h4>Attack Distribution</h4>
+                        <canvas id="attackTypeChart"></canvas>
+                    </div>
+                    <div class="attack-timeline">
+                        <h4>Threat Timeline</h4>
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced Security Stats Section -->
         <section class="security-stats">
-            <div class="stat-card threat-card">
-                <div class="stat-icon">
+            <div class="stat-card threat-card animated-card">
+                <div class="stat-icon pulse-animation">
                     <i class="fas fa-shield-alt"></i>
                 </div>
                 <div class="stat-content">
                     <h3>Active Threats</h3>
-                    <p class="stat-value" id="activeThreats">0</p>
+                    <p class="stat-value counting-animation" id="activeThreats">0</p>
                     <span class="stat-label">High Risk Alerts</span>
+                    <div class="stat-chart">
+                        <canvas id="threatTrendChart"></canvas>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card system-card">
-                <div class="stat-icon">
+            <div class="stat-card system-card animated-card">
+                <div class="stat-icon pulse-animation">
                     <i class="fas fa-server"></i>
                 </div>
                 <div class="stat-content">
                     <h3>Protected Systems</h3>
-                    <p class="stat-value" id="protectedSystems">0</p>
+                    <p class="stat-value counting-animation" id="protectedSystems">0</p>
                     <span class="stat-label">Monitored Endpoints</span>
+                    <div class="stat-chart">
+                        <canvas id="systemsChart"></canvas>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card response-card">
-                <div class="stat-icon">
+            <div class="stat-card response-card animated-card">
+                <div class="stat-icon pulse-animation">
                     <i class="fas fa-clock"></i>
                 </div>
                 <div class="stat-content">
                     <h3>Response Time</h3>
-                    <p class="stat-value" id="avgResponseTime">0ms</p>
+                    <p class="stat-value counting-animation" id="avgResponseTime">0ms</p>
                     <span class="stat-label">Average Response</span>
+                    <div class="stat-chart">
+                        <canvas id="responseTimeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card network-card animated-card">
+                <div class="stat-icon pulse-animation">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Network Traffic</h3>
+                    <p class="stat-value counting-animation" id="networkTraffic">0<span class="unit">GB</span></p>
+                    <span class="stat-label">Analyzed Today</span>
+                    <div class="stat-chart">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cyber Threat Intelligence Feed -->
+        <section class="threat-intelligence">
+            <h3 class="section-title"><i class="fas fa-brain"></i> Threat Intelligence</h3>
+            <div class="intel-dashboard">
+                <div class="intel-metrics">
+                    <div class="intel-metric">
+                        <div class="metric-circle">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" stroke-dasharray="75, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">75%</text>
+                            </svg>
+                            <span class="metric-label">Threat Detection</span>
+                        </div>
+                    </div>
+                    <div class="intel-metric">
+                        <div class="metric-circle">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" stroke-dasharray="90, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">90%</text>
+                            </svg>
+                            <span class="metric-label">System Integrity</span>
+                        </div>
+                    </div>
+                    <div class="intel-metric">
+                        <div class="metric-circle">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" stroke-dasharray="60, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">60%</text>
+                            </svg>
+                            <span class="metric-label">Risk Assessment</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="intel-feed">
+                    <div id="threatIntelFeed" class="cyber-feed"></div>
                 </div>
             </div>
         </section>
@@ -138,25 +267,157 @@
     </div>
 
     <div class="security-tools">
-        <h3><i class="fas fa-tools"></i> Security Tools</h3>
+        <h3 class="holographic-title"><i class="fas fa-tools"></i> Advanced Security Arsenal</h3>
         <div class="tools-grid">
-            <div class="tool-card">
-                <i class="fas fa-virus-slash"></i>
-                <h4>Threat Scanner</h4>
-                <p>Real-time system vulnerability scan</p>
-                <button class="cyber-button">Run Scan</button>
+            <div class="tool-card holographic">
+                <div class="tool-hologram">
+                    <div class="hologram-ring"></div>
+                    <i class="fas fa-virus-slash"></i>
+                </div>
+                <div class="tool-content">
+                    <h4>Quantum Threat Scanner</h4>
+                    <p>AI-powered vulnerability detection system</p>
+                    <div class="tool-metrics">
+                        <div class="tool-metric">
+                            <span class="metric-label">Accuracy</span>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 96%"></div>
+                            </div>
+                            <span class="metric-value">96%</span>
+                        </div>
+                        <div class="tool-metric">
+                            <span class="metric-label">Coverage</span>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 89%"></div>
+                            </div>
+                            <span class="metric-value">89%</span>
+                        </div>
+                    </div>
+                    <button class="cyber-button glow-effect">
+                        <span class="button-text">Initialize Scan</span>
+                        <span class="button-glitch"></span>
+                    </button>
+                </div>
             </div>
-            <div class="tool-card">
-                <i class="fas fa-network-wired"></i>
-                <h4>Network Monitor</h4>
-                <p>Monitor network traffic and connections</p>
-                <button class="cyber-button">View Network</button>
+            <div class="tool-card holographic">
+                <div class="tool-hologram">
+                    <div class="hologram-ring"></div>
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <div class="tool-content">
+                    <h4>Neural Network Monitor</h4>
+                    <p>Adaptive traffic analysis and anomaly detection</p>
+                    <div class="tool-metrics">
+                        <div class="tool-metric">
+                            <span class="metric-label">Bandwidth</span>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 72%"></div>
+                            </div>
+                            <span class="metric-value">72%</span>
+                        </div>
+                        <div class="tool-metric">
+                            <span class="metric-label">Detection</span>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 94%"></div>
+                            </div>
+                            <span class="metric-value">94%</span>
+                        </div>
+                    </div>
+                    <button class="cyber-button glow-effect">
+                        <span class="button-text">Visualize Network</span>
+                        <span class="button-glitch"></span>
+                    </button>
+                </div>
             </div>
-            <div class="tool-card">
-                <i class="fas fa-user-shield"></i>
-                <h4>Access Control</h4>
-                <p>Manage user permissions and access</p>
-                <button class="cyber-button">Manage Access</button>
+            <div class="tool-card holographic">
+                <div class="tool-hologram">
+                    <div class="hologram-ring"></div>
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="tool-content">
+                    <h4>Biometric Access Control</h4>
+                    <p>Multi-factor authentication and identity verification</p>
+                    <div class="tool-metrics">
+                        <div class="tool-metric">
+                            <span class="metric-label">Security</span>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 98%"></div>
+                            </div>
+                            <span class="metric-value">98%</span>
+                        </div>
+                        <div class="tool-metric">
+                            <span class="metric-label">Response</span>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 85%"></div>
+                            </div>
+                            <span class="metric-value">85%</span>
+                        </div>
+                    </div>
+                    <button class="cyber-button glow-effect">
+                        <span class="button-text">Secure Systems</span>
+                        <span class="button-glitch"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="tool-card holographic">
+                <div class="tool-hologram">
+                    <div class="hologram-ring"></div>
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="tool-content">
+                    <h4>Predictive Threat Analysis</h4>
+                    <p>Machine learning-based threat forecasting</p>
+                    <div class="tool-metrics">
+                        <div class="tool-metric">
+                            <span class="metric-label">Precision</span>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 91%"></div>
+                            </div>
+                            <span class="metric-value">91%</span>
+                        </div>
+                        <div class="tool-metric">
+                            <span class="metric-label">Learning</span>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 87%"></div>
+                            </div>
+                            <span class="metric-value">87%</span>
+                        </div>
+                    </div>
+                    <button class="cyber-button glow-effect">
+                        <span class="button-text">Run Simulation</span>
+                        <span class="button-glitch"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Holographic Defense System Visualization -->
+        <div class="defense-system-visualization">
+            <h4 class="system-title">Advanced Defense System Status</h4>
+            <div class="system-visualization">
+                <div id="defenseHologram" class="hologram-container"></div>
+                <div class="system-metrics">
+                    <div class="system-metric">
+                        <div class="metric-title">Firewall Status</div>
+                        <div class="metric-value active">Active</div>
+                        <div class="pulse-indicator active"></div>
+                    </div>
+                    <div class="system-metric">
+                        <div class="metric-title">Intrusion Detection</div>
+                        <div class="metric-value active">Operational</div>
+                        <div class="pulse-indicator active"></div>
+                    </div>
+                    <div class="system-metric">
+                        <div class="metric-title">Encryption</div>
+                        <div class="metric-value active">Quantum-Secured</div>
+                        <div class="pulse-indicator active"></div>
+                    </div>
+                    <div class="system-metric">
+                        <div class="metric-title">Authentication</div>
+                        <div class="metric-value active">Multi-Factor</div>
+                        <div class="pulse-indicator active"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -194,5 +455,6 @@
 </div>
 </div>
 <script src="script.js"></script>
+<script src="dashboard.js"></script>
 </body>
 </html> 
