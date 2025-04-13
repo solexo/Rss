@@ -1427,7 +1427,11 @@ const translations = {
         "newestFirst": "Newest First",
         "oldestFirst": "Oldest First",
         "severityLevel": "Severity Level",
-        "published": "Published:"
+        "published": "Published:",
+        "invalidEmail": "Please enter a valid email address",
+        "emailSuccess": "Successfully subscribed! Check your email for confirmation.",
+        "emailFailed": "Failed to subscribe. Please try again later.",
+        "processing": "Processing..."
     },
     fr: {
         "activeThreatsTitle": "Menaces Actives",
@@ -1471,7 +1475,11 @@ const translations = {
         "newestFirst": "Plus Récent",
         "oldestFirst": "Plus Ancien",
         "severityLevel": "Niveau de Sévérité",
-        "published": "Publié:"
+        "published": "Publié:",
+        "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+        "emailSuccess": "Inscription réussie! Vérifiez votre e-mail pour la confirmation.",
+        "emailFailed": "Échec de l'inscription. Veuillez réessayer plus tard.",
+        "processing": "Traitement en cours..."
     },
     ar: {
         "activeThreatsTitle": "التهديدات النشطة",
@@ -1515,7 +1523,11 @@ const translations = {
         "newestFirst": "الأحدث أولاً",
         "oldestFirst": "الأقدم أولاً",
         "severityLevel": "مستوى الخطورة",
-        "published": "نُشر:"
+        "published": "نُشر:",
+        "invalidEmail": "الرجاء إدخال عنوان بريد إلكتروني صالح",
+        "emailSuccess": "تم الاشتراك بنجاح! تحقق من بريدك الإلكتروني للتأكيد.",
+        "emailFailed": "فشل الاشتراك. يرجى المحاولة مرة أخرى لاحقاً.",
+        "processing": "جاري المعالجة..."
     }
 };
 
@@ -1538,10 +1550,31 @@ function changeLanguage(lang) {
             if (element.tagName === 'INPUT' && element.getAttribute('placeholder')) {
                 element.setAttribute('placeholder', translations[lang][key]);
             } else {
+                // Support HTML content in translations
                 element.innerHTML = translations[lang][key];
             }
         }
     });
+    
+    // Special handling for source info text node
+    const sourceInfo = document.querySelector('.source-info');
+    if (sourceInfo) {
+        const sourceCountElement = sourceInfo.querySelector('#sourceCount');
+        const sourceCountText = sourceCountElement ? sourceCountElement.textContent : '0';
+        const translatedText = translations[lang]['securityFeeds'];
+        sourceInfo.innerHTML = `<i class="fas fa-rss"></i><span id="sourceCount">${sourceCountText}</span> ${translatedText}`;
+    }
+    
+    // Update modal source count text
+    const modalBody = document.querySelector('.modal-body p');
+    if (modalBody) {
+        const modalSourceCountElement = document.getElementById('modalSourceCount');
+        const countValue = modalSourceCountElement ? modalSourceCountElement.textContent : '0';
+        const key = 'monitoringSources';
+        let translatedText = translations[lang][key];
+        translatedText = translatedText.replace('<span id=\'modalSourceCount\'>0</span>', `<span id='modalSourceCount'>${countValue}</span>`);
+        modalBody.innerHTML = translatedText;
+    }
     
     // Update timestamps
     updateLastRefreshTime();
@@ -1558,15 +1591,14 @@ function changeLanguage(lang) {
 
 // Add data-i18n attributes to all translatable elements on page load
 function prepareTranslations() {
-    // UI Element mapping
-    const elementsToTranslate = [
-        { selector: '#activeThreats', parent: 'h3', key: 'activeThreatsTitle' },
-        { selector: '#activeThreats', parentSelector: '.stat-card', childSelector: '.stat-label', key: 'activeThreatsLabel' },
-        { selector: '#protectedSystems', parent: 'h3', key: 'protectedSystemsTitle' },
-        { selector: '#protectedSystems', parentSelector: '.stat-card', childSelector: '.stat-label', key: 'protectedSystemsLabel' },
-        { selector: '#avgResponseTime', parent: 'h3', key: 'responseTimeTitle' },
-        { selector: '#avgResponseTime', parentSelector: '.stat-card', childSelector: '.stat-label', key: 'responseTimeLabel' },
-        { selector: '.source-info', textSelector: 'text', key: 'securityFeeds' },
+    // Simplified approach - directly set attributes on elements
+    const elementsMap = [
+        { selector: '.stat-card:nth-child(1) h3', key: 'activeThreatsTitle' },
+        { selector: '.stat-card:nth-child(1) .stat-label', key: 'activeThreatsLabel' },
+        { selector: '.stat-card:nth-child(2) h3', key: 'protectedSystemsTitle' },
+        { selector: '.stat-card:nth-child(2) .stat-label', key: 'protectedSystemsLabel' },
+        { selector: '.stat-card:nth-child(3) h3', key: 'responseTimeTitle' },
+        { selector: '.stat-card:nth-child(3) .stat-label', key: 'responseTimeLabel' },
         { selector: '#showSourcesBtn', key: 'viewSources' },
         { selector: '.modal-header h3', key: 'securityIntelligenceSources' },
         { selector: '.modal-body p', key: 'monitoringSources' },
@@ -1581,10 +1613,10 @@ function prepareTranslations() {
         { selector: '.tool-card:nth-child(3) p', key: 'accessControlDesc' },
         { selector: '.tool-card:nth-child(3) button', key: 'manageAccess' },
         { selector: '.notification-settings h3', key: 'notificationSettings' },
-        { selector: '#emailInput', placeholder: true, key: 'emailPlaceholder' },
+        { selector: '#emailInput', key: 'emailPlaceholder', isPlaceholder: true },
         { selector: '#saveEmail', key: 'saveEmail' },
         { selector: '.chat-header h3', key: 'securityAI' },
-        { selector: '#userInput', placeholder: true, key: 'userInputPlaceholder' },
+        { selector: '#userInput', key: 'userInputPlaceholder', isPlaceholder: true },
         { selector: '#refreshBtn', key: 'refreshAlerts' },
         { selector: 'label[for="severityFilter"]', key: 'severity' },
         { selector: '#severityFilter option[value="all"]', key: 'allSeverities' },
@@ -1602,37 +1634,20 @@ function prepareTranslations() {
         { selector: '#sortOrder option[value="severity"]', key: 'severityLevel' }
     ];
     
-    // Add data-i18n attributes to elements
-    elementsToTranslate.forEach(item => {
+    // Add data-i18n attributes
+    elementsMap.forEach(item => {
         const elements = document.querySelectorAll(item.selector);
         elements.forEach(element => {
-            if (item.placeholder) {
+            if (item.isPlaceholder) {
                 element.setAttribute('data-i18n', item.key);
-            } else if (item.parent) {
-                const parentElement = element.closest(item.parent);
-                if (parentElement) parentElement.setAttribute('data-i18n', item.key);
-            } else if (item.parentSelector && item.childSelector) {
-                const parentElement = element.closest(item.parentSelector);
-                if (parentElement) {
-                    const childElement = parentElement.querySelector(item.childSelector);
-                    if (childElement) childElement.setAttribute('data-i18n', item.key);
-                }
-            } else if (item.textSelector === 'text') {
-                // This is for handling text nodes
-                const textNode = Array.from(element.childNodes)
-                    .find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
-                if (textNode) {
-                    // Create a span to replace the text node
-                    const span = document.createElement('span');
-                    span.setAttribute('data-i18n', item.key);
-                    element.insertBefore(span, textNode);
-                    element.removeChild(textNode);
-                }
             } else {
                 element.setAttribute('data-i18n', item.key);
             }
         });
     });
+    
+    // Special handling for text nodes mixed with elements like in source-info
+    // We won't set data-i18n here but handle them specially in changeLanguage
 }
 
 // Initialize language functionality
@@ -1722,9 +1737,216 @@ rtlStyles.textContent = `
 `;
 document.head.appendChild(rtlStyles);
 
-// Add language initialization to the document load event
+// Ensure all UI event listeners are properly attached
+function reattachEventListeners() {
+    // Add debugging logs
+    console.log("Reattaching event listeners...");
+    
+    // Source button event listeners
+    const sourceBtn = document.getElementById('showSourcesBtn');
+    const closeBtn = document.getElementById('closeSourcesBtn');
+    const modal = document.getElementById('sourcesModal');
+    
+    if (sourceBtn) {
+        sourceBtn.addEventListener('click', () => {
+            if (modal) modal.classList.add('active');
+        });
+    }
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            if (modal) modal.classList.remove('active');
+        });
+    }
+    
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        });
+    }
+    
+    // Security tools event listeners
+    document.querySelectorAll('.tool-card button').forEach(button => {
+        const toolCard = button.closest('.tool-card');
+        if (!toolCard) return;
+        
+        const toolIndex = Array.from(toolCard.parentElement.children).indexOf(toolCard) + 1;
+        
+        button.addEventListener('click', () => {
+            if (toolIndex === 1) {
+                securityTools.threatScanner.scan();
+            } else if (toolIndex === 2) {
+                securityTools.networkMonitor.start();
+            } else if (toolIndex === 3) {
+                securityTools.accessControl.manage();
+            }
+        });
+    });
+    
+    // Refresh button
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', updateAlerts);
+    }
+    
+    // Email button
+    const saveEmailBtn = document.getElementById('saveEmail');
+    if (saveEmailBtn) {
+        saveEmailBtn.addEventListener('click', async () => {
+            const email = document.getElementById('emailInput').value.trim();
+            const notificationStatus = document.getElementById('notificationStatus');
+            
+            if (!email || !email.includes('@')) {
+                notificationStatus.textContent = translations[currentLanguage].invalidEmail;
+                notificationStatus.style.color = 'var(--moroccan-red)';
+                return;
+            }
+            
+            notificationStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + translations[currentLanguage].processing;
+            
+            try {
+                const success = await sendConfirmationEmail(email);
+                if (success) {
+                    saveEmailToStorage(email);
+                    notificationStatus.innerHTML = '<i class="fas fa-check"></i> ' + translations[currentLanguage].emailSuccess;
+                    notificationStatus.style.color = 'var(--primary-color)';
+                    document.getElementById('emailInput').value = '';
+                } else {
+                    throw new Error('Failed to send confirmation email');
+                }
+            } catch (error) {
+                notificationStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + translations[currentLanguage].emailFailed;
+                notificationStatus.style.color = 'var(--moroccan-red)';
+            }
+        });
+    }
+}
+
+// Global variable to track current language
+let currentLanguage = 'en';
+
+// Update the changeLanguage function to track current language
+function changeLanguage(lang) {
+    // Store current language
+    currentLanguage = lang;
+    
+    // Set HTML lang attribute
+    document.getElementById('html-root').setAttribute('lang', lang);
+    
+    // Add RTL support for Arabic
+    if (lang === 'ar') {
+        document.body.classList.add('rtl');
+    } else {
+        document.body.classList.remove('rtl');
+    }
+    
+    // Update all translatable elements
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+            if (element.tagName === 'INPUT' && element.getAttribute('placeholder')) {
+                element.setAttribute('placeholder', translations[lang][key]);
+            } else {
+                // Support HTML content in translations
+                element.innerHTML = translations[lang][key];
+            }
+        }
+    });
+    
+    // Special handling for source info text node
+    const sourceInfo = document.querySelector('.source-info');
+    if (sourceInfo) {
+        const sourceCountElement = sourceInfo.querySelector('#sourceCount');
+        const sourceCountText = sourceCountElement ? sourceCountElement.textContent : '0';
+        const translatedText = translations[lang]['securityFeeds'];
+        sourceInfo.innerHTML = `<i class="fas fa-rss"></i><span id="sourceCount">${sourceCountText}</span> ${translatedText}`;
+    }
+    
+    // Update modal source count text
+    const modalBody = document.querySelector('.modal-body p');
+    if (modalBody) {
+        const modalSourceCountElement = document.getElementById('modalSourceCount');
+        const countValue = modalSourceCountElement ? modalSourceCountElement.textContent : '0';
+        const key = 'monitoringSources';
+        let translatedText = translations[lang][key];
+        translatedText = translatedText.replace('<span id=\'modalSourceCount\'>0</span>', `<span id='modalSourceCount'>${countValue}</span>`);
+        modalBody.innerHTML = translatedText;
+    }
+    
+    // Update timestamps
+    updateLastRefreshTime();
+    
+    // Update active state of language buttons
+    document.querySelectorAll('.language-btn').forEach(btn => {
+        if (btn.getAttribute('data-lang') === lang) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    
+    // Reattach event listeners since some elements might have been replaced
+    reattachEventListeners();
+}
+
+// Update initializeUI to include language initialization
+function initializeUI() {
+    initAIChat();
+    initializeSourceCounter();
+    updateLastRefreshTime();
+    initializeSecurityStats();
+    initializeLanguage();
+    reattachEventListeners();
+}
+
+// This code ensures proper event listener setup by overriding any previous listeners
 document.addEventListener('DOMContentLoaded', () => {
-    initializeUI();
-    updateAlerts();
-    initializeLanguage(); // Add language initialization
+    // Give it a little extra time to make sure language initialization completes
+    setTimeout(() => {
+        console.log("Running final event listener fix...");
+        
+        // Force reattach all event listeners
+        reattachEventListeners();
+        
+        // Fix the security tools buttons explicitly
+        document.querySelectorAll('.tool-card button').forEach(button => {
+            // First remove any existing click listeners by cloning the element
+            const oldButton = button;
+            const newButton = oldButton.cloneNode(true);
+            oldButton.parentNode.replaceChild(newButton, oldButton);
+            
+            const toolCard = newButton.closest('.tool-card');
+            if (!toolCard) return;
+            
+            const toolIndex = Array.from(toolCard.parentElement.children).indexOf(toolCard) + 1;
+            
+            // Add the event listener
+            newButton.addEventListener('click', () => {
+                console.log(`Security tool ${toolIndex} clicked`);
+                if (toolIndex === 1) {
+                    securityTools.threatScanner.scan();
+                } else if (toolIndex === 2) {
+                    securityTools.networkMonitor.start();
+                } else if (toolIndex === 3) {
+                    securityTools.accessControl.manage();
+                }
+            });
+        });
+        
+        // Fix language buttons explicitly
+        document.querySelectorAll('.language-btn').forEach(btn => {
+            // First remove any existing click listeners by cloning the element
+            const oldBtn = btn;
+            const newBtn = oldBtn.cloneNode(true);
+            oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+            
+            const lang = newBtn.getAttribute('data-lang');
+            
+            // Add the event listener
+            newBtn.addEventListener('click', () => {
+                console.log(`Language ${lang} selected`);
+                changeLanguage(lang);
+            });
+        });
+    }, 500);
 }); 
